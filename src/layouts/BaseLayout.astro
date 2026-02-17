@@ -1,6 +1,12 @@
 ---
-import "../styles/global.css";
-const { title = "d0labs", description, bodyClass = "" } = Astro.props;
+const {
+  title = "d0labs",
+  description,
+  bodyClass = "",
+  canonical,
+  ogImage = "https://d0labs.com/logo.svg",
+  jsonLd,
+} = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -9,14 +15,28 @@ const { title = "d0labs", description, bodyClass = "" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    {description && <meta name="twitter:description" content={description} />}
+    <meta name="twitter:image" content={ogImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body>
+    {jsonLd && (
+      <script type="application/ld+json" is:inline>{JSON.stringify(jsonLd)}</script>
+    )}
     <main class={`wrap ${bodyClass}`.trim()}>
       <slot />
     </main>
