@@ -3,7 +3,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import CanvasLogo from "../components/CanvasLogo.astro";
 ---
 
-<BaseLayout title="d0labs" bodyClass="home">
+<BaseLayout
+  title="d0labs"
+  description="d0labs is a lab for agent systems that actually run."
+  canonical="https://d0labs.com/"
+  bodyClass="home"
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "d0labs",
+    url: "https://d0labs.com/",
+  }}
+>
   <CanvasLogo canvasId="home-logo" size="large" />
   <div class="copy">
     <p>We have been working on agents in the dark for a while now. The future is not prompts. It is systems that move on their own.</p>
