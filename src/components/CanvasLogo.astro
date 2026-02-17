@@ -11,7 +11,9 @@ const {
 const canvasClass = size === "small" ? "canvas canvas-small" : "canvas";
 ---
 
-<canvas id={canvasId} class={canvasClass} data-ratio={ratio} data-maxwidth={maxWidth}></canvas>
+<a class="logo-link" href="/" aria-label="Home">
+  <canvas id={canvasId} class={canvasClass} data-ratio={ratio} data-maxwidth={maxWidth}></canvas>
+</a>
 
 <script type="module" define:vars={{ canvasId, ratio, maxWidth, canvasScript }}>
   import(canvasScript).then(({ initCanvasLogo }) => {

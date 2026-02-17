@@ -37,6 +37,11 @@ a {
   align-items: center;
 }
 
+.logo-link {
+  display: block;
+  width: 100%;
+}
+
 .canvas {
   display: block;
   width: 100%;
@@ -90,6 +95,25 @@ a {
   font-size: 0.9rem;
   opacity: 0.7;
   margin-top: 4px;
+}
+
+.post h1 {
+  width: 100%;
+  max-width: 900px;
+  font-size: clamp(2.4rem, 3.4vw, 3.6rem);
+  font-weight: 400;
+  margin: 12px 0 12px;
+  text-align: left;
+}
+
+.post p {
+  width: 100%;
+  max-width: 900px;
+  font-size: clamp(1.6rem, 2.3vw, 2.6rem);
+  line-height: 1.5;
+  font-weight: 300;
+  text-align: left;
+  margin: 12px 0;
 }
 
 .footer-link {

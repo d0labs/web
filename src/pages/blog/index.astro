@@ -5,7 +5,7 @@ import CanvasLogo from "../../components/CanvasLogo.astro";
 const posts = await Astro.glob("./*.md");
 ---
 
-<BaseLayout title="d0labs | blog">
+<BaseLayout title="d0labs | blog" bodyClass="blog">
   <CanvasLogo canvasId="blog-logo" size="small" ratio={0.35} maxWidth={900} />
   <div class="blog-header">Blog</div>
   <ul class="blog-list">

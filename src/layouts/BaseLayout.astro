@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-const { title = "d0labs" } = Astro.props;
+const { title = "d0labs", bodyClass = "" } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -16,7 +16,7 @@ const { title = "d0labs" } = Astro.props;
     />
   </head>
   <body>
-    <main class="wrap">
+    <main class={`wrap ${bodyClass}`.trim()}>
       <slot />
     </main>
   </body>
