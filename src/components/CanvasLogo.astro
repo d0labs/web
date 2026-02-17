@@ -1,0 +1,24 @@
+---
+import canvasScript from "../scripts/canvasLogo.js?url";
+
+const {
+  canvasId = "d0-logo",
+  size = "large",
+  ratio = size === "small" ? 0.35 : 0.5,
+  maxWidth = 1100,
+} = Astro.props;
+
+const canvasClass = size === "small" ? "canvas canvas-small" : "canvas";
+---
+
+<canvas id={canvasId} class={canvasClass} data-ratio={ratio} data-maxwidth={maxWidth}></canvas>
+
+<script type="module" define:vars={{ canvasId, ratio, maxWidth, canvasScript }}>
+  import(canvasScript).then(({ initCanvasLogo }) => {
+    initCanvasLogo({
+      canvasId,
+      ratio,
+      maxWidth,
+    });
+  });
+</script>

@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CanvasLogo from "../components/CanvasLogo.astro";
+import copy from "../data/website-content.txt?raw";
+
+const paragraphs = copy.trim().split(/\n\s*\n/);
+---
+
+<BaseLayout title="d0labs">
+  <CanvasLogo canvasId="home-logo" size="large" />
+  <div class="copy">
+    {paragraphs.map((text) => (
+      <p>{text}</p>
+    ))}
+  </div>
+  <div class="footer-link">
+    <a href="/blog">Blog</a>
+  </div>
+</BaseLayout>

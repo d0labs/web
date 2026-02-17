@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CanvasLogo from "../../components/CanvasLogo.astro";
+
+const posts = await Astro.glob("./*.md");
+---
+
+<BaseLayout title="d0labs | blog">
+  <CanvasLogo canvasId="blog-logo" size="small" ratio={0.35} maxWidth={900} />
+  <div class="blog-header">Blog</div>
+  <ul class="blog-list">
+    {posts.map((post) => (
+      <li>
+        <a href={post.url}>{post.frontmatter.title}</a>
+        <span class="blog-meta">
+          {post.frontmatter.date} — {post.frontmatter.description}
+        </span>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

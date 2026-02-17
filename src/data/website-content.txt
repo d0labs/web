@@ -1,0 +1,3 @@
+I have been working on agents in the dark for a while now. The future is not prompts. It is systems that move on their own.
+
+d0labs is where I test that edge.
