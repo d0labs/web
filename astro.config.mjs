@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "http://localhost:4321",
+  site: "https://d0labs.com",
+  output: "static",
 });
