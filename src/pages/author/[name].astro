@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await Astro.glob("../blog/*.md");
+  const authors = Array.from(
+    new Set(
+      posts
+        .map((post) => post.frontmatter.author)
+        .filter(Boolean)
+        .map((a) => String(a))
+    )
+  );
+  return authors.map((author) => ({ params: { name: author } }));
+}
+
+const { name } = Astro.params;
+const posts = (await Astro.glob("../blog/*.md"))
+  .filter((post) => (post.frontmatter.author || "").toLowerCase() === String(name).toLowerCase())
+  .sort((a, b) => new Date(b.frontmatter.date) - new Date(a.frontmatter.date));
+
+const title = `d0labs | ${name}`;
+const description = `Posts by ${name}.`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={`https://d0labs.com/author/${name}/`}
+  bodyClass="blog"
+>
+  <div class="logo-static">
+    <a href="/" aria-label="Home">
+      <img src="/src/assets/logo.svg" alt="d0labs" />
+    </a>
+  </div>
+  <div class="post-nav">
+    <a href="/blog">Back to index</a>
+  </div>
+  <div class="blog-header">{name}</div>
+  <ul class="blog-list">
+    {posts.map((post) => (
+      <li>
+        <a href={post.url}>{post.frontmatter.title}</a>
+        <span class="blog-meta">
+          {String(post.frontmatter.date).split("T")[0]}
+          {post.frontmatter.description && ` — ${post.frontmatter.description}`}
+        </span>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

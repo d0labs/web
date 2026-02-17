@@ -8,6 +8,7 @@ const posts = (await Astro.glob("./*.md")).sort(
 <BaseLayout
   title="d0labs | blog"
   description="Notes and updates from d0labs."
+  canonical="https://d0labs.com/blog/"
   bodyClass="blog"
 >
   <div class="logo-static">
@@ -21,7 +22,11 @@ const posts = (await Astro.glob("./*.md")).sort(
       <li>
         <a href={post.url}>{post.frontmatter.title}</a>
         <span class="blog-meta">
-          {post.frontmatter.date} — {post.frontmatter.description}
+          {String(post.frontmatter.date).split("T")[0]}
+          {post.frontmatter.author && (
+            <> · <a class="author-link" href={`/author/${post.frontmatter.author}/`}>{post.frontmatter.author}</a></>
+          )}
+          {post.frontmatter.description && ` — ${post.frontmatter.description}`}
         </span>
       </li>
     ))}

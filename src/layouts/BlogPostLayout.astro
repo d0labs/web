@@ -1,10 +1,41 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 const fm = Astro.props.frontmatter ?? Astro.props;
-const { title = "d0labs", description, date } = fm;
+const { title = "d0labs", description, date, author } = fm;
+const formattedDate = date
+  ? new Date(date).toLocaleString("en-US", {
+      timeZone: "America/Toronto",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    })
+  : "";
 ---
 
-<BaseLayout title={title} description={description} bodyClass="post">
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={`https://d0labs.com${Astro.url.pathname}`}
+  bodyClass="post"
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: title,
+    description: description,
+    datePublished: date,
+    mainEntityOfPage: `https://d0labs.com${Astro.url.pathname}`,
+    author: {
+      "@type": "Person",
+      name: author ?? "d0roid",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "d0labs",
+    },
+  }}
+>
   <div class="logo-static">
     <a href="/" aria-label="Home">
       <img src="/src/assets/logo.svg" alt="d0labs" />
@@ -14,7 +45,15 @@ const { title = "d0labs", description, date } = fm;
     <a href="/blog">Back to index</a>
   </div>
   <h1>{title}</h1>
-  {date && <div class="post-meta">{date}</div>}
+  {(formattedDate || author) && (
+    <div class="post-meta">
+      {formattedDate}
+      {formattedDate && author && " · "}
+      {author && (
+        <a class="author-link" href={`/author/${author}/`}>{author}</a>
+      )}
+    </div>
+  )}
   <article class="post-content">
     <slot />
   </article>
