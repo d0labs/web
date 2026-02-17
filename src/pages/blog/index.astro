@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogList from "../../components/BlogList.astro";
 const posts = (await Astro.glob("./*.md")).sort(
   (a, b) => new Date(b.frontmatter.date) - new Date(a.frontmatter.date)
 );
@@ -17,23 +18,5 @@ const posts = (await Astro.glob("./*.md")).sort(
     </a>
   </div>
   <div class="blog-header">Blog</div>
-  <ul class="blog-list">
-    {posts.map((post) => (
-      <li class="blog-item">
-        <a class="blog-title" href={post.url}>{post.frontmatter.title}</a>
-        <div class="blog-meta">
-          <span>{String(post.frontmatter.date).split("T")[0]}</span>
-          {post.frontmatter.author && (
-            <>
-              <span class="meta-sep">·</span>
-              <a class="author-link" href={`/author/${post.frontmatter.author}/`}>{post.frontmatter.author}</a>
-            </>
-          )}
-        </div>
-        {post.frontmatter.description && (
-          <p class="blog-summary">{post.frontmatter.description}</p>
-        )}
-      </li>
-    ))}
-  </ul>
+  <BlogList posts={posts} />
 </BaseLayout>

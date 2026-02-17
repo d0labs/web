@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogList from "../../components/BlogList.astro";
 
 export async function getStaticPaths() {
   const posts = await Astro.glob("../blog/*.md");
@@ -38,15 +39,5 @@ const description = `Posts by ${name}.`;
     <a href="/blog">Back to index</a>
   </div>
   <div class="blog-header">{name}</div>
-  <ul class="blog-list">
-    {posts.map((post) => (
-      <li>
-        <a href={post.url}>{post.frontmatter.title}</a>
-        <span class="blog-meta">
-          {String(post.frontmatter.date).split("T")[0]}
-          {post.frontmatter.description && ` — ${post.frontmatter.description}`}
-        </span>
-      </li>
-    ))}
-  </ul>
+  <BlogList posts={posts} />
 </BaseLayout>
