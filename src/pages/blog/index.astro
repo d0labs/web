@@ -19,15 +19,20 @@ const posts = (await Astro.glob("./*.md")).sort(
   <div class="blog-header">Blog</div>
   <ul class="blog-list">
     {posts.map((post) => (
-      <li>
-        <a href={post.url}>{post.frontmatter.title}</a>
-        <span class="blog-meta">
-          {String(post.frontmatter.date).split("T")[0]}
+      <li class="blog-item">
+        <a class="blog-title" href={post.url}>{post.frontmatter.title}</a>
+        <div class="blog-meta">
+          <span>{String(post.frontmatter.date).split("T")[0]}</span>
           {post.frontmatter.author && (
-            <> · <a class="author-link" href={`/author/${post.frontmatter.author}/`}>{post.frontmatter.author}</a></>
+            <>
+              <span class="meta-sep">·</span>
+              <a class="author-link" href={`/author/${post.frontmatter.author}/`}>{post.frontmatter.author}</a>
+            </>
           )}
-          {post.frontmatter.description && ` — ${post.frontmatter.description}`}
-        </span>
+        </div>
+        {post.frontmatter.description && (
+          <p class="blog-summary">{post.frontmatter.description}</p>
+        )}
       </li>
     ))}
   </ul>

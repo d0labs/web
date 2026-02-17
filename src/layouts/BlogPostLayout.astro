@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 const fm = Astro.props.frontmatter ?? Astro.props;
-const { title = "d0labs", description, date, author } = fm;
+const { title: postTitle = "", description, date, author } = fm;
+const title = postTitle ? `d0labs | ${postTitle}` : "d0labs";
 const formattedDate = date
   ? new Date(date).toLocaleString("en-US", {
       timeZone: "America/Toronto",
@@ -44,7 +45,7 @@ const formattedDate = date
   <div class="post-nav">
     <a href="/blog">Back to index</a>
   </div>
-  <h1>{title}</h1>
+  <h1>{postTitle}</h1>
   {(formattedDate || author) && (
     <div class="post-meta">
       {formattedDate}

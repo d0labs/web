@@ -105,37 +105,52 @@ a {
   list-style: none;
 }
 
-.blog-list li {
-  margin-bottom: 20px;
+.blog-item {
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.blog-list a {
+.blog-title {
+  display: inline-block;
   text-decoration: underline;
   text-underline-offset: 6px;
   text-decoration-thickness: 2px;
   color: var(--black);
   font-weight: 500;
-  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
   border-radius: 2px;
   transition: background 0.15s ease, color 0.15s ease, text-decoration-color 0.15s ease;
   text-decoration-color: var(--black);
 }
 
-.blog-list a:hover {
+.blog-title:hover {
   background: var(--black);
   color: var(--white);
   text-decoration-color: var(--white);
 }
 
-.blog-meta .author-link {
-  font-size: inherit;
-}
-
 .blog-meta {
-  display: block;
+  display: flex;
+  gap: 8px;
+  align-items: center;
   font-size: clamp(0.95rem, 1.2vw, 1.1rem);
   opacity: 0.7;
   margin-top: 6px;
+}
+
+.meta-sep {
+  opacity: 0.7;
+}
+
+.blog-summary {
+  margin: 10px 0 0;
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.blog-meta .author-link {
+  font-size: inherit;
 }
 
 .post h1 {
@@ -198,10 +213,19 @@ a {
 
 .author-link {
   text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1.5px;
-  color: inherit;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+  color: var(--black);
   font-size: inherit;
+  border-radius: 2px;
+  transition: background 0.15s ease, color 0.15s ease, text-decoration-color 0.15s ease;
+  text-decoration-color: var(--black);
+}
+
+.author-link:hover {
+  background: var(--black);
+  color: var(--white);
+  text-decoration-color: var(--white);
 }
 
 h1, h2, h3, h4, h5 {
