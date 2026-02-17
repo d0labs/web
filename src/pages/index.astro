@@ -1,17 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CanvasLogo from "../components/CanvasLogo.astro";
-import copy from "../data/website-content.txt?raw";
-
-const paragraphs = copy.trim().split(/\n\s*\n/);
 ---
 
 <BaseLayout title="d0labs">
   <CanvasLogo canvasId="home-logo" size="large" />
   <div class="copy">
-    {paragraphs.map((text) => (
-      <p>{text}</p>
-    ))}
+    <p>I have been working on agents in the dark for a while now. The future is not prompts. It is systems that move on their own.</p>
+    <p>d0labs is where I test that edge.</p>
   </div>
   <div class="footer-link">
     <a href="/blog">Blog</a>
