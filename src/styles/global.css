@@ -55,6 +55,29 @@ a {
   max-width: 900px;
 }
 
+.logo-static {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 36px 0;
+}
+
+.logo-static img {
+  display: block;
+  width: 220px;
+  height: auto;
+}
+
+.blog {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+
+.post {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+
 .copy {
   width: 100%;
   max-width: 900px;

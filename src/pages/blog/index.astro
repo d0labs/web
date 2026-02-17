@@ -1,7 +1,5 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import CanvasLogo from "../../components/CanvasLogo.astro";
-
 const posts = (await Astro.glob("./*.md")).sort(
   (a, b) => new Date(b.frontmatter.date) - new Date(a.frontmatter.date)
 );
@@ -12,7 +10,11 @@ const posts = (await Astro.glob("./*.md")).sort(
   description="Notes and updates from d0labs."
   bodyClass="blog"
 >
-  <CanvasLogo canvasId="blog-logo" size="small" ratio={0.35} maxWidth={900} />
+  <div class="logo-static">
+    <a href="/" aria-label="Home">
+      <img src="/src/assets/logo.svg" alt="d0labs" />
+    </a>
+  </div>
   <div class="blog-header">Blog</div>
   <ul class="blog-list">
     {posts.map((post) => (
