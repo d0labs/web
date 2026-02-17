@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-const { title = "d0labs", bodyClass = "" } = Astro.props;
+const { title = "d0labs", description, bodyClass = "" } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -8,6 +8,7 @@ const { title = "d0labs", bodyClass = "" } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    {description && <meta name="description" content={description} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

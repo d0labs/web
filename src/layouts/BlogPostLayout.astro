@@ -1,0 +1,19 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import CanvasLogo from "../components/CanvasLogo.astro";
+
+const fm = Astro.props.frontmatter ?? Astro.props;
+const { title = "d0labs", description, date } = fm;
+---
+
+<BaseLayout title={title} description={description} bodyClass="post">
+  <CanvasLogo canvasId="post-logo" size="small" ratio={0.35} maxWidth={900} />
+  <div class="post-nav">
+    <a href="/blog">Back to index</a>
+  </div>
+  <h1>{title}</h1>
+  {date && <div class="post-meta">{date}</div>}
+  <article class="post-content">
+    <slot />
+  </article>
+</BaseLayout>

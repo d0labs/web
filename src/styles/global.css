@@ -40,10 +40,11 @@ a {
 .logo-link {
   display: block;
   width: 100%;
+  text-align: center;
 }
 
 .canvas {
-  display: block;
+  display: inline-block;
   width: 100%;
   height: auto;
   background: #fff;
@@ -69,7 +70,7 @@ a {
   width: 100%;
   max-width: 900px;
   margin-top: 8px;
-  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
   font-weight: 400;
 }
 
@@ -82,19 +83,20 @@ a {
 }
 
 .blog-list li {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .blog-list a {
   text-decoration: none;
   font-weight: 500;
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
 }
 
 .blog-meta {
   display: block;
-  font-size: 0.9rem;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
   opacity: 0.7;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .post h1 {
@@ -109,11 +111,71 @@ a {
 .post p {
   width: 100%;
   max-width: 900px;
-  font-size: clamp(1.6rem, 2.3vw, 2.6rem);
-  line-height: 1.5;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.7;
   font-weight: 300;
   text-align: left;
   margin: 12px 0;
+}
+
+.post-meta {
+  width: 100%;
+  max-width: 900px;
+  font-size: 0.95rem;
+  opacity: 0.7;
+  margin: 6px 0 8px;
+  text-align: left;
+}
+
+.post-content {
+  width: 100%;
+  max-width: 900px;
+}
+
+.post-nav {
+  width: 100%;
+  max-width: 900px;
+  margin: 16px 0 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.post-nav a {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+  color: var(--black);
+  padding: 6px 10px;
+  border-radius: 2px;
+  transition: background 0.15s ease, color 0.15s ease, text-decoration-color 0.15s ease;
+  text-decoration-color: var(--black);
+}
+
+.post-nav a:hover {
+  background: var(--black);
+  color: var(--white);
+  text-decoration-color: var(--white);
+}
+
+h1, h2, h3, h4, h5 {
+  width: 100%;
+  max-width: 900px;
+  font-weight: 400;
+  margin: 20px 0 12px;
+  line-height: 1.2;
+}
+
+h1 { font-size: clamp(2.4rem, 3.4vw, 3.6rem); }
+h2 { font-size: clamp(2rem, 2.8vw, 3rem); }
+h3 { font-size: clamp(1.6rem, 2.2vw, 2.4rem); }
+h4 { font-size: clamp(1.3rem, 1.6vw, 1.8rem); }
+h5 { font-size: clamp(1.1rem, 1.3vw, 1.4rem); }
+
+p {
+  width: 100%;
+  max-width: 900px;
+  margin: 12px 0;
+  line-height: 1.7;
 }
 
 .footer-link {

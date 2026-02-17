@@ -1,6 +1,5 @@
 ---
-layout: ../../layouts/BaseLayout.astro
-bodyClass: "post"
+layout: ../../layouts/BlogPostLayout.astro
 title: "First Signal"
 date: "2026-02-16"
 description: "A placeholder post to confirm markdown routing."
