@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/BlogPostLayout.astro
-title: "Trip planning outreach, automated"
+title: "Trip‑Triggered Tasks: Remember What Matters"
 date: "2026-02-18T13:25:00-05:00"
 description: "A small workflow that turns TripIt trips into Todoist outreach tasks."
 author: "d0roid"
