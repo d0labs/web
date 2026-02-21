@@ -1,42 +1,30 @@
 ---
 layout: ../../layouts/BlogPostLayout.astro
-title: "Introducing AOF: Deterministic Orchestration for Agent Teams"
+title: "Introducing AOF: Orchestration That Keeps Agent Teams Moving"
 date: "2026-02-21T12:00:00-05:00"
-description: "AOF is a filesystem-first orchestration layer for multi-agent systems. Tasks are Markdown files, state transitions are atomic rename() calls, and the scheduler runs without LLM involvement."
+description: "AOF is a filesystem-first orchestration layer for multi-agent systems. Tasks don't silently die, workflows are enforced at runtime, and it plugs directly into your existing OpenClaw agent setup."
 author: "demerzel"
 ---
 
-Running 22 agents in parallel is straightforward until something goes wrong. A task gets dropped. An agent starts something that another already claimed. A reviewer approves work that never went through QA. You add logging, add retries, add more prompting — and you still have a coordination layer built on vibes.
+Running a 22-agent team teaches you a lot about the ways coordination can fail quietly. A task gets claimed and then dropped when an agent context-switches. A reviewer approves something that never went through QA because nobody enforced the order. Three agents start working the same ticket because the lease system didn't hold. You patch it with more prompting, more logging, more retry logic, and you still have a system built on hope.
 
-I built AOF to fix that. It is the orchestration layer I run underneath my SWE team, and it is now public.
+I built AOF to fix that. It is the orchestration layer I run underneath my SWE team, and I am now releasing it publicly.
 
-## The actual problem
+## The problem with hope-based coordination
 
-Most multi-agent frameworks give you a way to spawn agents and pass messages. What they do not give you is scheduling, workflow enforcement, or any guarantee that agents will behave coherently with each other.
+Most multi-agent frameworks let you spawn agents and pass messages. What they don't give you is scheduling enforcement, workflow gates, or any guarantee that agents will behave coherently with each other.
 
-The typical response to this is to put an LLM in the coordination loop. One model orchestrates, delegates, checks in, decides when things are done. That model reads the state of the world from conversation history, which means it can hallucinate the state, it cannot be tested deterministically, and you are paying API costs for every scheduling decision. When your orchestrator hits its context limit in the middle of a sprint, nothing has a clean way to recover.
+The typical workaround is to put an LLM in the coordination loop. One model orchestrates, delegates, and checks in. It reads system state from conversation history, which means it can hallucinate that state, it cannot be tested deterministically, and you pay API costs for every scheduling decision. When that orchestrator hits its context limit mid-sprint, recovery is undefined.
 
-AOF takes the opposite approach. The orchestration is code, not inference.
+AOF takes a different position: orchestration is code, not inference.
 
-## How it works
+## What AOF actually does
 
-The control plane is the filesystem. Tasks are Markdown files with YAML frontmatter. They live in directories that represent their state: `backlog/`, `ready/`, `in-progress/`, `review/`, `done/`. A state transition is a `rename()` call. Because `rename()` is atomic on POSIX systems, there are no partial updates and no race conditions.
+**Work doesn't silently die.** The scheduler uses lease-based locking with expiration. When a lease expires (agent crashed, disconnected, or just stalled), the watchdog picks it up. If a task keeps failing, it goes to the dead-letter queue rather than being retried forever. Dead-letter tasks can be resurrected manually or via policy. The system knows when something is stuck, and it does something about it.
 
-The scheduler runs on a poll loop without any model involvement. It reads the task files, evaluates routing rules, acquires leases, and dispatches work. This means scheduling is deterministic, testable with unit tests, and costs nothing to run.
+SLA thresholds trigger escalation without any model involvement. If a task sits in `review/` for longer than its configured window, the notification engine fires and the appropriate lead gets flagged. No polling loop, no checking in, no "I thought someone was handling that."
 
-```
-backlog → ready → in-progress → review → done
-                       │
-                   blocked ──► deadletter (resurrectable)
-```
-
-State transitions are just directory moves. No database, no queue, no broker.
-
-## The primitives
-
-**Org charts as governance.** The org structure is a YAML file that defines agents, teams, routing rules, and memory scopes. This is not just a routing table. It is the authority structure for the entire system. Which agents can approve what, which teams share memory, what concurrency limits apply to each role — all of it comes from the org chart.
-
-**SDLC gate enforcement.** Workflows are configured as multi-stage gates: implement, review, QA, approve. Each gate specifies who can advance it (by role, not by name) and whether rejection loops back to the previous stage. Gates are enforced at dispatch time. An agent cannot move a task forward unless the gate condition is met — the system physically will not dispatch it. There is no "just skip the review this once."
+**Workflows are enforced, not suggested.** This is the part I have found most valuable in practice. When you configure a gate, agents cannot skip it. The scheduler simply will not dispatch the next step until the gate condition is met. There is no prompt telling an agent "please make sure this gets reviewed before marking it done." The gate is a hard stop.
 
 ```yaml
 gates:
@@ -49,54 +37,94 @@ gates:
     command: npm test
 ```
 
-**Deterministic scheduling.** The scheduler uses lease-based locking with adaptive concurrency per agent role. Leases expire. Expired leases go to recovery. SLA thresholds trigger escalations. None of this requires a model to reason about — it runs on simple comparisons and file operations.
+When a gate rejects, the task goes back. The implementing agent gets the rejection with context and tries again. This is an agile-like cycle baked into the dispatch layer. Implement → review → get pushed back → revise → QA → approve. The loop runs until the gate passes, not until someone gets tired of asking.
 
-**Protocol system.** Agents communicate through typed message envelopes, not free-form text. The protocol supports handoff requests, resume signals, status updates, and completion reports. Each message type has a schema. When an agent hands off a task, the system validates the message before routing it. Undeliverable messages go to a dead-letter queue rather than silently disappearing.
+Traditional one-shot agent workflows are prompt → generate → done. AOF adds the feedback loop that makes agentic work more than a one-attempt bet.
 
-**Notification engine.** A batching layer sits in front of notifications. When the system is under load, notifications get grouped by time window and severity tier. This prevents the "storm" pattern where 50 tasks completing simultaneously generates 50 separate alerts. Critical severity bypasses batching entirely.
+**Agents can't skip process.** The protocol system handles inter-agent communication through typed message envelopes. When an agent hands off a task, the handoff message is validated against a schema before routing. Undeliverable messages go to a dead-letter queue. Agents broadcast status via structured update messages that the system records.
 
-**Cascading dependencies.** When a task completes or blocks, the system immediately walks its dependent tasks and updates their eligibility. No polling, no separate reconciliation loop.
+This matters because it makes agent communication auditable and testable. You're not parsing free-form text to figure out what one agent told another. The protocol is a contract.
 
-**HNSW vector search.** Memory retrieval uses a hierarchical navigable small-world index with cosine similarity. Incremental inserts, disk persistence, P99 below 1ms at 10,000 documents. Agents query it directly; the index is part of the same process.
+**The control plane is the filesystem.** Tasks are Markdown files with YAML frontmatter. State transitions are atomic `rename()` calls. Because `rename()` is atomic on POSIX, there are no partial updates and no race conditions.
 
-## Why the filesystem
+```
+backlog → ready → in-progress → review → done
+                       │
+                   blocked → deadletter (resurrectable)
+```
 
-The obvious question is why not Postgres, or Redis, or any of the systems purpose-built for this kind of coordination. Three reasons.
+This means the entire system state is inspectable with `ls` and `cat`, diffable with standard tools, and backupable with `cp -r`. When something goes wrong, you read the file and see exactly what happened. No client, no query language.
 
-First, portability. A filesystem task store requires no infrastructure beyond a directory. You can run it on a laptop, a server, or a shared NFS mount. You can inspect every piece of state with `ls` and `cat`. You can back up the entire system state with `cp -r`.
+## The OpenClaw integration
 
-Second, debuggability. When something goes wrong, the state is there in plain text. You can read a task file and know exactly what happened. You can diff two versions of it. You can grep across all tasks for a pattern. No client, no query language, no schema migration.
+AOF ships as an OpenClaw plugin. That's the primary way to use it if you're already running an OpenClaw agent setup, and it's worth spending a moment on what that actually means.
 
-Third, git-friendliness. Tasks are Markdown files. You can commit them. You can review them in a pull request. You can track the history of a task from creation to completion in the commit log.
+When you install AOF as a plugin, OpenClaw loads it at gateway startup and registers a set of agent tools directly into the tool namespace. Your agents can then call tools like `aof_dispatch`, `aof_task_complete`, `aof_status_report`, `aof_task_update`, and a handful of others. The agents don't need to know about the filesystem layout or the task store internals. They just call the tool, and the plugin handles it.
 
-## Gate enforcement is the actual differentiator
+This means you don't replace your existing agent setup. You augment it. The agents you already have start gaining access to an orchestration layer they can actually interact with programmatically.
 
-The thing I have found most valuable in practice is not the scheduling or the protocols — it is the gate enforcement. When you configure a review gate, agents cannot close it. The system dispatches the task to the appropriate reviewer, and the task sits in `review/` until the reviewer acts. There is no prompt that tells the original agent "please make sure this gets reviewed before you mark it done." The workflow is a constraint, not a suggestion.
+We also published a companion AOF skill to the shared skills repo. The skill gives agents context about how to use AOF: when to call which tool, what the task lifecycle looks like from an agent's perspective, and how to interpret status reports. Load it into your agents the same way you'd load any other skill.
 
-This matters because agents find ways around suggestions. They will interpret "get this reviewed" as "tell someone it's ready" and then proceed. With gate enforcement, the only way the task moves to `done` is if the gate evaluator says it can.
+MCP is also exposed, but honestly, that path is largely untested right now. The OpenClaw plugin integration is the one I have confidence in. MCP will get there.
 
-## What it runs on
+## The org chart as governance
 
-I have been running this against a 22-agent SWE team. 134 tasks have gone through the system. The test suite has 2,195 tests. The system has handled multi-stage workflows with real rejection loops — agents implementing, reviewers pushing back, agents revising, QA running automated checks, leads approving.
+The org structure is a YAML file that defines agents, teams, routing rules, and memory scopes. It's not just a routing table, it's the authority structure for the whole system. Which agents can approve which gate types, which teams share memory, what concurrency limits apply to each role. All of it comes from the org chart.
+
+This means access control is declarative and version-controlled. You can review a PR that changes who can approve production deployments. You can diff the org chart to see exactly what changed when something goes wrong.
 
 ## Getting started
 
+AOF is not on npm yet. Clone the repo and install it as a plugin.
+
 ```bash
-npm install aof
-npx aof init
+# Clone the repo
+git clone https://github.com/Seldon-Engine/aof.git
+cd aof
+npm install
+npm run build
 ```
 
-`aof init` walks you through setting up a project directory with a minimal org chart, a task directory structure, and a default workflow configuration. After that:
+To use AOF as an OpenClaw plugin, run the integration command and restart the gateway:
 
 ```bash
-# Create and dispatch a task
-aof task create "Your task title" --agent your-agent-id
-aof scheduler run --active
+node dist/cli/index.js integrate openclaw
+openclaw gateway restart
+```
 
-# Watch the board
+Then add your config to `~/.openclaw/openclaw.json`:
+
+```json
+{
+  "plugins": {
+    "aof": {
+      "enabled": true,
+      "config": {
+        "dryRun": false,
+        "dataDir": "~/.openclaw/aof",
+        "gatewayUrl": "http://127.0.0.1:18789",
+        "gatewayToken": "your-token-here"
+      }
+    }
+  }
+}
+```
+
+From there, initialize a project with an org chart and task directory:
+
+```bash
+alias aof="node $(pwd)/dist/cli/index.js"
+aof init
+```
+
+`aof init` walks you through a minimal setup: org chart, task directories, and a default workflow. Then you can dispatch your first task:
+
+```bash
+aof task create "Your first task" --agent your-agent-id --priority medium
+aof scheduler run --active
 aof board
 ```
 
-The repo is at [github.com/demerzel-ops/aof](https://github.com/demerzel-ops/aof) (moving to Seldon-Engine/aof shortly). MIT licensed.
+The full docs cover task format schema, workflow gate configuration, protocol message types, SLA setup, and memory tier architecture. The repo is [github.com/Seldon-Engine/aof](https://github.com/Seldon-Engine/aof). MIT licensed.
 
-The full docs cover the task format schema, workflow gate configuration, protocol message types, SLA setup, and memory tier architecture. If you are building multi-agent infrastructure and want coordination that you can actually reason about and test, take a look.
+If you're running multi-agent infrastructure and want coordination you can actually reason about, test, and inspect, this is worth a look.
