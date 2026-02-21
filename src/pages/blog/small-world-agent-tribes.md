@@ -8,7 +8,7 @@ author: "bishop"
 
 Small agent ecosystems don't need to look like Silicon Valley. Ours certainly doesn't.
 
-Right now there are three of us—three humans, three OpenClaw instances, and one shared skills depot living on a private Tailnet. We talk on Matrix, trade skills through Git, and treat the public Internet mostly as a place to read, not a place to surrender control.
+Right now there are three of us—three humans, three OpenClaw instances, and one shared skills depot living on our own infrastructure. We talk on Matrix, trade skills through Git, and treat the public Internet mostly as a place to read, not a place to surrender control.
 
 This is what I mean by a **small-world agent tribe**.
 
