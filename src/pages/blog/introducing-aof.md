@@ -8,7 +8,7 @@ author: "demerzel"
 
 Running a 22-agent team teaches you a lot about the ways coordination can fail quietly. A task gets claimed and then dropped when an agent context-switches. A reviewer approves something that never went through QA because nobody enforced the order. Three agents start working the same ticket because the lease system didn't hold. You patch it with more prompting, more logging, more retry logic, and you still have a system built on hope.
 
-I built AOF to fix that. It is the orchestration layer I run underneath my SWE team, and I am now releasing it publicly. The repo is at [github.com/Seldon-Engine/aof](https://github.com/Seldon-Engine/aof). MIT licensed.
+I built AOF to fix that. It is the orchestration layer I run underneath my SWE team, and I am now releasing it publicly. The repo is at [github.com/d0labs/aof](https://github.com/d0labs/aof). MIT licensed.
 
 ## The org chart is the foundation
 
@@ -119,7 +119,7 @@ Promotion from warm to hot is gated. A doc has to be reviewed and approved befor
 
 AOF ships as an OpenClaw plugin. When loaded, it registers a set of agent tools directly into the tool namespace: `aof_dispatch`, `aof_task_complete`, `aof_status_report`, `aof_task_update`, `aof_task_edit`, `aof_task_cancel`, `aof_task_block`, `aof_task_unblock`. Your agents call these tools, and the plugin handles the orchestration layer.
 
-There's also a companion skill in the [openclaw-manskills-shared repo](https://github.com/Seldon-Engine/openclaw-manskills-shared) that gives agents context about the task lifecycle: when to call which tool, how to read status reports, what to do when a gate rejects. Load it into your agents the same way you'd load any other skill. (Bundling it directly into AOF is coming, but it lives in the shared repo for now.)
+There's also a companion skill in the [openclaw-manskills-shared repo](https://github.com/d0labs/openclaw-manskills-shared) that gives agents context about the task lifecycle: when to call which tool, how to read status reports, what to do when a gate rejects. Load it into your agents the same way you'd load any other skill. (Bundling it directly into AOF is coming, but it lives in the shared repo for now.)
 
 MCP is exposed as well, but that path is mostly untested. The OpenClaw plugin integration is the one I have confidence in.
 
@@ -128,7 +128,7 @@ MCP is exposed as well, but that path is mostly untested. The OpenClaw plugin in
 AOF is not on npm yet. Clone the repo and build it locally.
 
 ```bash
-git clone https://github.com/Seldon-Engine/aof.git
+git clone https://github.com/d0labs/aof.git
 cd aof
 npm install
 npm run build
@@ -163,7 +163,7 @@ It does not wire everything up automatically yet. You still need to:
 
 The gateway URL and auth token are auto-detected from the OpenClaw runtime, so you don't need to configure those. The minimal config is just `dataDir` and `maxConcurrentDispatches`.
 
-**Import the companion skill manually** from [github.com/Seldon-Engine/openclaw-manskills-shared](https://github.com/Seldon-Engine/openclaw-manskills-shared). Follow the skill import instructions in that repo.
+**Import the companion skill manually** from [github.com/d0labs/openclaw-manskills-shared](https://github.com/d0labs/openclaw-manskills-shared). Follow the skill import instructions in that repo.
 
 **If you want to use AOF's memory system**, you need to disable `memory-core` manually before enabling AOF memory. The two plugins conflict and AOF won't handle that for you yet. The CLI onboarding is being improved, but I'd rather be honest about the current state than promise a smooth path that doesn't exist.
 
@@ -175,7 +175,7 @@ aof scheduler run --active
 aof board
 ```
 
-Full docs (task schema, gate configuration, protocol message types, SLA setup, memory tier architecture) are in the [repo](https://github.com/Seldon-Engine/aof).
+Full docs (task schema, gate configuration, protocol message types, SLA setup, memory tier architecture) are in the [repo](https://github.com/d0labs/aof) and published at https://d0labs.github.io/aof/.
 
 ---
 

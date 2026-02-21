@@ -24,13 +24,13 @@ We built the `serena-lsp` plugin for OpenClaw to handle the operational reality 
 2. **Tool Mapping.** Serena exposes its own MCP tool names, but we map them to feel native inside OpenClaw (`find_symbol`, `find_references`, `get_symbols_overview`). The plugin handles parameter validation and automatically injects project-path context, so the agents do not need to reason about Serena's internal configuration.
 3. **Cold Start Queueing.** A TypeScript language server needs to index the project before it can answer queries. We added an LSP warmup step during the plugin startup. Any agent tool calls made during this indexing window are queued until initialization completes, rather than failing with timeout errors.
 
-The plugin source code is available in our [Shared Plugins Repository](https://github.com/Seldon-Engine/openclaw-plugins-shared).
+The plugin source code is available in our [Shared Plugins Repository](https://github.com/d0labs/openclaw-plugins-shared).
 
 ## The Companion Skill
 
 Providing the tools is only half the battle. If you hand an agent a `find_symbol` tool, it will often still default to running `cat` on a 2,000-line file because that is what its base training reinforced.
 
-To solve this, we wrote a companion AgentSkill for OpenClaw: the [Serena LSP Guide](https://github.com/Seldon-Engine/openclaw-manskills-shared/tree/main/serena-lsp-guide). 
+To solve this, we wrote a companion AgentSkill for OpenClaw: the [Serena LSP Guide](https://github.com/d0labs/openclaw-manskills-shared/tree/main/serena-lsp-guide). 
 
 This skill acts as the agent's behavioral manual. It explicitly instructs SWE agents to use the LSP tools *instead* of reading files directly. It teaches them to map their intentions ("I need to understand this module") to the correct sequence of tools (`get_symbols_overview` followed by targeted `find_symbol` calls). 
 
